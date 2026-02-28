@@ -1,14 +1,34 @@
-# Hybrid vs Single-Mode Memory: A Technical Deep Dive
+# OpenClaw Hybrid Memory: Architecture Deep Dive
+
+> Technical analysis of the hybrid memory architecture designed for **OpenClaw** AI agents
+
+## Overview
+
+**OpenClaw Hybrid Memory** is a production-ready memory system built specifically for OpenClaw AI agents. It combines multiple search paradigms to provide the best possible context retrieval for long-running agent sessions.
+
+This document explains why hybrid memory outperforms single-mode approaches in OpenClaw deployments.
 
 ## The Fundamental Problem
 
-When building AI agents that operate over long time periods and large knowledge bases, memory systems face a trilemma:
+When building AI agents with OpenClaw that operate over long time periods and large knowledge bases, memory systems face a trilemma:
 
 1. **Precision**: Finding exactly what you need
 2. **Recall**: Not missing relevant information  
 3. **Speed**: Responding quickly enough for real-time use
 
-You can optimize for two, but traditionally not all three.
+You can optimize for two, but traditionally not all three. OpenClaw agents need all three.
+
+## OpenClaw Memory Requirements
+
+OpenClaw agents have unique memory needs:
+
+- **Long sessions**: Agents run for hours or days
+- **Large contexts**: Accumulate thousands of messages
+- **Mixed queries**: Need both exact matches and semantic search
+- **Real-time**: Can't wait seconds for retrieval
+- **Persistence**: Must survive restarts and crashes
+
+Single-mode memory systems fail to meet all these requirements.
 
 ## Single-Mode Limitations
 
@@ -326,18 +346,30 @@ Mem0's Neo4j integration provides:
 - You're building production AI agents
 - You want to optimize costs over time
 
-## Conclusion
+## Conclusion: Why OpenClaw Needs Hybrid Memory
 
 The hybrid approach isn't just "using both"—it's **intelligently combining** complementary strengths while mitigating individual weaknesses.
 
-For AI agents that need to:
+For OpenClaw agents that need to:
 - Remember specific facts (dates, names, decisions)
 - Understand context and relationships
 - Respond quickly for real-time interaction
 - Scale cost-effectively
+- Survive long-running sessions
 
-**Hybrid memory is the optimal architecture.**
+**Hybrid memory is the optimal architecture for OpenClaw.**
+
+### Integration with OpenClaw
+
+This architecture is implemented in the OpenClaw Hybrid Memory project:
+
+- **HOT Layer**: `SESSION-STATE.md` (WAL-protected)
+- **WARM Layer**: Mem0 + FAISS (existing OpenClaw setup)
+- **COLD Layer**: Hybrid search over `memory/` directory
+- **Automation**: OpenClaw Heartbeat integration
+
+See the [main README](../README.md) for OpenClaw-specific installation and usage.
 
 ---
 
-*This document is part of the OpenClaw Self-Memory project.*
+*This document is part of the OpenClaw Hybrid Memory project.*
