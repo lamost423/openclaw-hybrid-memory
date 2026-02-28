@@ -1,12 +1,18 @@
-# Contributing to Hybrid Agent Memory
+# Contributing to OpenClaw Hybrid Memory
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to **OpenClaw Hybrid Memory**! This document provides guidelines for contributing to the project.
+
+## About This Project
+
+OpenClaw Hybrid Memory is designed specifically for [OpenClaw](https://openclaw.ai) AI agents, providing a production-grade hybrid memory system. While it's built for OpenClaw, the core components can be adapted for other agent frameworks.
 
 ## How to Contribute
 
 ### Reporting Bugs
 
-- Check if the bug has already been reported in [Issues](https://github.com/yourusername/hybrid-agent-memory/issues)
+- Check if the bug has already been reported in [Issues](https://github.com/lamost423/openclaw-hybrid-memory/issues)
+- Include your OpenClaw version and configuration
+- Provide steps to reproduce in an OpenClaw context
 - If not, create a new issue with:
   - Clear description of the bug
   - Steps to reproduce
@@ -30,22 +36,23 @@ Thank you for your interest in contributing! This document provides guidelines f
 7. Push to your fork
 8. Open a Pull Request
 
-## Development Setup
+## Development Setup for OpenClaw
 
 ```bash
-# Clone your fork
-git clone https://github.com/yourusername/hybrid-agent-memory.git
-cd hybrid-agent-memory
+# Clone into your OpenClaw workspace
+cd ~/.openclaw/workspace
+git clone https://github.com/lamost423/openclaw-hybrid-memory.git scripts/openclaw-hybrid-memory
+cd scripts/openclaw-hybrid-memory
 
-# Create virtual environment
+# Create virtual environment (recommended)
 python3 -m venv venv
 source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run tests
-python3 -m pytest tests/
+# Test with your OpenClaw memory
+python3 scripts/hybrid_search.py "test query" --source-dir ~/.openclaw/workspace/memory/
 ```
 
 ## Code Style
