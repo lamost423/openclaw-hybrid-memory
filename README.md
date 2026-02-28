@@ -1,377 +1,112 @@
-# OpenClaw Hybrid Memory
+# OpenClaw Hybrid Memory / OpenClaw 混合记忆系统
 
-> A production-ready hybrid memory system for **OpenClaw** AI agents, built on top of **[Mem0](https://github.com/mem0ai/mem0)** (graph memory) and **[rank-bm25](https://github.com/dorianbrown/rank_bm25)** (keyword search), combining BM25, vector semantic search, and intelligent caching.
+[English](#english) | [中文](#中文)
+
+---
+
+<a name="english"></a>
+## English
+
+> A production-ready hybrid memory system for **OpenClaw** AI agents, built on top of **[Mem0](https://github.com/mem0ai/mem0)** (graph memory) and **[rank-bm25](https://github.com/dorianbrown/rank_bm25)** (keyword search).
 
 [![Built for OpenClaw](https://img.shields.io/badge/Built%20for-OpenClaw-purple.svg)](https://openclaw.ai)
 [![Based on Mem0](https://img.shields.io/badge/Based%20on-Mem0-blue.svg)](https://github.com/mem0ai/mem0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🎯 What is This?
+### 🚀 One-Line Installation
 
-This project extends **[Mem0](https://github.com/mem0ai/mem0)** (the popular graph memory system) with **BM25 keyword search** (via [rank-bm25](https://github.com/dorianbrown/rank_bm25)) to create a hybrid memory architecture specifically optimized for **OpenClaw** AI agents.
+```bash
+curl -fsSL https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/install.sh | bash
+```
+
+### What is This?
+
+This project extends **Mem0** with **BM25 keyword search** to create a hybrid memory architecture for OpenClaw AI agents.
 
 **Why extend Mem0?**
 - Mem0 provides excellent vector + graph capabilities
 - But it lacks BM25 keyword precision for exact matches
 - This project adds the missing piece: hybrid search
 
-| Component | Source | Enhancement |
-|-----------|--------|-------------|
-| **Vector Search** | Mem0 (FAISS) | ✅ Unchanged |
-| **Graph Memory** | Mem0 (Neo4j) | ✅ Unchanged |
-| **BM25 Search** | rank-bm25 | ➕ **Added** |
-| **Hybrid Fusion** | This project | ➕ **New** |
-| **Caching** | This project | ➕ **New** |
-| **OpenClaw Integration** | This project | ➕ **New** |
+### Features
 
-## 🚀 Quick Start for OpenClaw Users
+- **Hybrid Search**: BM25 (30%) + Vector (70%) fusion
+- **Smart Caching**: 0ms response for repeated queries
+- **Incremental Updates**: Only re-index changed files
+- **OpenClaw Integration**: Works with existing Mem0 setup
 
-### Prerequisites
+### Quick Start
 
 ```bash
-# Install Ollama (OpenClaw uses this for embeddings)
-curl -fsSL https://ollama.com/install.sh | sh
-ollama serve
-ollama pull mxbai-embed-large
-```
-
-### Installation in OpenClaw Workspace
-
-```bash
-# Navigate to your OpenClaw workspace
-cd ~/.openclaw/workspace
-
-# Clone into scripts directory
-git clone https://github.com/lamost423/openclaw-hybrid-memory.git scripts/openclaw-hybrid-memory
-
-# Install dependencies
-pip install -r scripts/openclaw-hybrid-memory/requirements.txt
-
-# Build initial index from your OpenClaw memory
-python3 scripts/openclaw-hybrid-memory/scripts/build_index.py --source-dir memory/
-```
-
-### OpenClaw Integration
-
-Add to your `openclaw.json`:
-
-```json
-{
-  "agents": {
-    "defaults": {
-      "heartbeat": {
-        "every": "30m",
-        "prompt": "Run scripts/openclaw-hybrid-memory/scripts/heartbeat_auto.py --full"
-      }
-    }
-  }
-}
-```
-
-Create `HEARTBEAT.md` in your OpenClaw workspace:
-
-```markdown
-### Every Hour
-- [ ] Run OpenClaw Hybrid Memory maintenance
-  ```bash
-  python3 scripts/openclaw-hybrid-memory/scripts/heartbeat_auto.py --full
-  ```
-- [ ] Check index status and backup critical files
-```
-
-## 💡 Using with OpenClaw
-
-### From Agent Sessions
-
-Your OpenClaw agent can now use hybrid search:
-
-```python
-# In an OpenClaw session
-from scripts.openclaw_hybrid_memory.scripts.hybrid_search import HybridSearch
-
-searcher = HybridSearch()
-searcher.load_index()
-
-# Search across all your OpenClaw memory
-results = searcher.search("100w目标规划", top_k=5)
-```
-
-### Enhanced Mem0 Bridge
-
-This project includes an enhanced Mem0 bridge for OpenClaw:
-
-```bash
-# Search both Self-Memory and Mem0
-python3 scripts/openclaw-hybrid-memory/scripts/mem0_bridge_enhanced.py search "your query"
-
-# Add memory to Mem0
-python3 scripts/openclaw-hybrid-memory/scripts/mem0_bridge_enhanced.py add "Important fact to remember"
-
-# List all Mem0 memories
-python3 scripts/openclaw-hybrid-memory/scripts/mem0_bridge_enhanced.py list
-```
-
-### Automatic Maintenance
-
-The system integrates with OpenClaw's heartbeat:
-
-1. **Compaction Guard**: Protects critical files from context compression loss
-2. **Incremental Indexing**: Only re-indexes changed files
-3. **Cache Management**: Automatically cleans expired cache entries
-4. **Health Checks**: Monitors Ollama, Mem0, and index status
-
-## 🏗️ Architecture
-
-### OpenClaw Memory Stack
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    OpenClaw Agent Layer                      │
-│                    (Your AI Agent)                          │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-              ┌────────▼────────┐
-              │  OpenClaw       │
-              │  Gateway        │
-              └────────┬────────┘
-                       │
-         ┌─────────────┼─────────────┐
-         │             │             │
-         ▼             ▼             ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│   HEARTBEAT  │ │  Hybrid  │ │     Mem0     │
-│     .md      │ │  Memory  │ │   (Neo4j)    │
-└──────────────┘ └────┬─────┘ └──────┬───────┘
-                      │              │
-                      └──────┬───────┘
-                             │
-                    ┌────────▼────────┐
-                    │  Multi-Tier     │
-                    │  Storage        │
-                    │                 │
-                    │  HOT: SESSION   │
-                    │  WARM: FAISS    │
-                    │  COLD: Files    │
-                    └─────────────────┘
-```
-
-### Key Components
-
-| Component | Purpose | OpenClaw Integration |
-|-----------|---------|---------------------|
-| **Hybrid Search** | BM25 + Vector fusion | Searches `memory/` directory |
-| **Compaction Guard** | Protects critical files | Works with `SESSION-STATE.md` |
-| **Heartbeat Auto** | Automated maintenance | Runs via OpenClaw heartbeat |
-| **Mem0 Bridge** | Enhanced Mem0 access | Integrates with existing Mem0 |
-
-## 📊 Performance in OpenClaw
-
-Tested on OpenClaw workspace with typical usage:
-
-| Metric | Without Hybrid | With Hybrid | Improvement |
-|--------|---------------|-------------|-------------|
-| Search Precision@5 | 45% | **78%** | +73% |
-| Avg Response Time | 1200ms | **15ms** | 80x faster |
-| Cache Hit Rate | 0% | **57%** | New |
-| Context Retention | Limited | **Full** | Persistent |
-
-## 🔧 Configuration for OpenClaw
-
-### Environment Variables
-
-Add to your OpenClaw environment:
-
-```bash
-# In ~/.zshrc or ~/.bashrc
-export OLLAMA_HOST=http://localhost:11434
-export OPENCLAW_WORKSPACE=~/.openclaw/workspace
-export HYBRID_MEMORY_CACHE_TTL=24
-export HYBRID_MEMORY_INDEX_DIR=~/.openclaw/workspace/config/hybrid-memory
-```
-
-### OpenClaw Config (`openclaw.json`)
-
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "kimi-coding/k2p5"
-      },
-      "workspace": "/Users/danielwu/.openclaw/workspace",
-      "heartbeat": {
-        "every": "30m",
-        "activeHours": {
-          "start": "07:00",
-          "end": "23:00",
-          "timezone": "Asia/Shanghai"
-        },
-        "target": "last",
-        "prompt": "Read HEARTBEAT.md if it exists. Run maintenance tasks for OpenClaw Hybrid Memory."
-      }
-    }
-  }
-}
-```
-
-## 📁 OpenClaw Directory Structure
-
-When installed in OpenClaw:
-
-```
-~/.openclaw/workspace/
-├── scripts/
-│   └── openclaw-hybrid-memory/     # This repository
-│       ├── scripts/
-│       │   ├── hybrid_search.py
-│       │   ├── build_index.py
-│       │   ├── incremental_update.py
-│       │   ├── search_cache.py
-│       │   ├── search_history.py
-│       │   ├── compaction_guard.py
-│       │   ├── heartbeat_auto.py
-│       │   └── mem0_bridge_enhanced.py
-│       ├── docs/
-│       └── README.md
-├── memory/                          # Your OpenClaw memory files
-├── config/
-│   └── hybrid-memory/              # Index and cache storage
-│       ├── index/
-│       ├── cache/
-│       └── history/
-├── backups/
-│   └── compaction-guard/           # Automatic backups
-├── HEARTBEAT.md                    # OpenClaw heartbeat tasks
-└── SESSION-STATE.md                # HOT layer storage
-```
-
-## 🏢 Use Cases with OpenClaw
-
-### Case 1: Long-Term Project Management
-
-Managing a 100w RMB business goal across months:
-
-```bash
-# Search for past decisions
-python3 scripts/openclaw-hybrid-memory/scripts/mem0_bridge_enhanced.py search "100w目标决策"
-
-# Results include:
-# - Earlier discussions about strategy
-# - Related documents from memory/
-# - Connected entities via Mem0 graph
-```
-
-### Case 2: Multi-Platform Content Creation
-
-Your OpenClaw agent managing social media:
-
-```python
-# In an OpenClaw session
-from scripts.openclaw_hybrid_memory.scripts.search_cache import get_search_cache
-
-# Check what content was posted before
-cache = get_search_cache()
-popular = cache.get_popular_queries(10)
-# Avoid duplicates, find templates
-```
-
-### Case 3: Knowledge Base Maintenance
-
-Automatically maintaining your OpenClaw knowledge base:
-
-```bash
-# Runs every 30 minutes via OpenClaw heartbeat
-python3 scripts/openclaw-hybrid-memory/scripts/heartbeat_auto.py --full
-
-# This automatically:
-# 1. Backs up critical files (Compaction Guard)
-# 2. Updates search index (Incremental)
-# 3. Cleans expired cache
-# 4. Reports status
-```
-
-## 📝 Commands Reference
-
-### Essential Commands
-
-```bash
-# Build initial index
-python3 scripts/openclaw-hybrid-memory/scripts/build_index.py --source-dir memory/
-
-# Hybrid search
+# Search
 python3 scripts/openclaw-hybrid-memory/scripts/hybrid_search.py "your query"
 
-# Check system status
+# Check status
 python3 scripts/openclaw-hybrid-memory/scripts/heartbeat_auto.py --status
-
-# View cache stats
-python3 scripts/openclaw-hybrid-memory/scripts/search_cache.py --stats
-
-# View search history
-python3 scripts/openclaw-hybrid-memory/scripts/search_history.py --history
 ```
-
-### Maintenance Commands
-
-```bash
-# Incremental update (fast)
-python3 scripts/openclaw-hybrid-memory/scripts/incremental_update.py
-
-# Force full rebuild (slow)
-python3 scripts/openclaw-hybrid-memory/scripts/build_index.py --force
-
-# Backup critical files
-python3 scripts/openclaw-hybrid-memory/scripts/compaction_guard.py --check
-
-# Clear cache
-python3 scripts/openclaw-hybrid-memory/scripts/search_cache.py --clear
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! This project is designed specifically for OpenClaw but can be adapted for other agent frameworks.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## 🙏 Acknowledgments
-
-This project builds upon and extends several excellent open source projects:
-
-- **[OpenClaw](https://openclaw.ai)** - The AI agent platform this memory system is designed for
-- **[Mem0](https://github.com/mem0ai/mem0)** - Graph memory system with FAISS + Neo4j architecture
-- **[rank-bm25](https://github.com/dorianbrown/rank_bm25)** - BM25 algorithm implementation for keyword search
-- **[Ollama](https://ollama.com)** - Local LLM and embedding inference
-- **[FAISS](https://github.com/facebookresearch/faiss)** - Facebook's vector search library
-
-We extend our gratitude to the creators and maintainers of these projects. OpenClaw Hybrid Memory combines their strengths into a unified, production-ready solution specifically optimized for OpenClaw agents.
-
-## 📐 Architecture
-
-![OpenClaw Hybrid Memory Technical Architecture](https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/docs/assets/technical-architecture.png)
-
-*Technical architecture: User query flows through cache check, then parallel BM25 and Vector search, fusion engine combines results*
-
-### Component Stack
-
-| Layer | Technology | Source |
-|-------|-----------|--------|
-| **Vector Search** | FAISS | Mem0 |
-| **Graph Memory** | Neo4j | Mem0 |
-| **Keyword Search** | BM25 | rank-bm25 |
-| **Hybrid Fusion** | Custom | This Project |
-| **Caching** | In-Memory + Disk | This Project |
-| **OpenClaw Integration** | Heartbeat + Scripts | This Project |
-
-## 📧 Support
-
-For OpenClaw-specific questions:
-- OpenClaw Docs: https://docs.openclaw.ai
-- OpenClaw Discord: https://discord.com/invite/clawd
-- GitHub Issues: [Create an issue](https://github.com/lamost423/openclaw-hybrid-memory/issues)
 
 ---
 
-**Built with 💜 for the OpenClaw community**
+<a name="中文"></a>
+## 中文
 
-If this helps your OpenClaw agent remember better, please ⭐ the repo!
+> 为 **OpenClaw** AI 智能体打造的生产级混合记忆系统，基于 **[Mem0](https://github.com/mem0ai/mem0)**（图记忆）和 **[rank-bm25](https://github.com/dorianbrown/rank_bm25)**（关键词搜索）构建。
+
+### 🚀 一行命令安装
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/install.sh | bash
+```
+
+### 这是什么？
+
+本项目在 **Mem0** 基础上增加了 **BM25 关键词搜索**，为 OpenClaw AI 智能体创建混合记忆架构。
+
+**为什么扩展 Mem0？**
+- Mem0 提供优秀的向量 + 图记忆能力
+- 但缺乏 BM25 关键词精确匹配
+- 本项目补充缺失环节：混合搜索
+
+### 特性
+
+- **混合搜索**：BM25（30%）+ 向量（70%）融合
+- **智能缓存**：重复查询 0ms 响应
+- **增量更新**：只重新索引变更文件
+- **OpenClaw 集成**：与现有 Mem0 设置协同工作
+
+### 快速开始
+
+```bash
+# 搜索
+python3 scripts/openclaw-hybrid-memory/scripts/hybrid_search.py "你的查询"
+
+# 查看状态
+python3 scripts/openclaw-hybrid-memory/scripts/heartbeat_auto.py --status
+```
+
+---
+
+## 📐 Architecture / 架构
+
+![Technical Architecture](https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/docs/assets/technical-architecture.png)
+
+| Component | Technology | Source |
+|-----------|-----------|--------|
+| Vector Search | FAISS | Mem0 |
+| Graph Memory | Neo4j | Mem0 |
+| Keyword Search | BM25 | rank-bm25 |
+| Hybrid Fusion | Custom | This Project |
+| Caching | In-Memory | This Project |
+
+---
+
+## Documentation / 文档
+
+- [English README](README_EN.md)
+- [中文文档](README_CN.md)
+- [Architecture Deep Dive](docs/ARCHITECTURE.md)
+
+## License / 许可证
+
+MIT License
