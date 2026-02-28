@@ -344,9 +344,9 @@ We extend our gratitude to the creators and maintainers of these projects. OpenC
 
 ## 📸 Architecture
 
-![OpenClaw Hybrid Memory Architecture](docs/assets/architecture-diagram.png)
+![OpenClaw Hybrid Memory Architecture](https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/docs/assets/architecture-diagram.png)
 
-*Hybrid memory architecture combining BM25 keyword search, vector semantic search, and intelligent caching for OpenClaw AI agents*
+*OpenClaw Hybrid Memory architecture: Central hub connected to BM25 Keyword Search (blue), Vector Semantic Search (purple), and Intelligent Cache (gold)*
 
 ## 📧 Support
 
