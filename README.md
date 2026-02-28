@@ -1,25 +1,29 @@
 # OpenClaw Hybrid Memory
 
-> A production-ready hybrid memory system for **OpenClaw** AI agents, combining BM25 keyword search, vector semantic search, and intelligent caching.
+> A production-ready hybrid memory system for **OpenClaw** AI agents, built on top of **[Mem0](https://github.com/mem0ai/mem0)** (graph memory) and **[rank-bm25](https://github.com/dorianbrown/rank_bm25)** (keyword search), combining BM25, vector semantic search, and intelligent caching.
 
 [![Built for OpenClaw](https://img.shields.io/badge/Built%20for-OpenClaw-purple.svg)](https://openclaw.ai)
+[![Based on Mem0](https://img.shields.io/badge/Based%20on-Mem0-blue.svg)](https://github.com/mem0ai/mem0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🎯 Why OpenClaw + Hybrid Memory?
+## 🎯 What is This?
 
-**OpenClaw** provides the foundation for autonomous AI agents. This project adds a **production-grade memory layer** that OpenClaw agents can use to:
+This project extends **[Mem0](https://github.com/mem0ai/mem0)** (the popular graph memory system) with **BM25 keyword search** (via [rank-bm25](https://github.com/dorianbrown/rank_bm25)) to create a hybrid memory architecture specifically optimized for **OpenClaw** AI agents.
 
-- Remember facts across long conversations
-- Retrieve relevant context instantly
-- Learn from past interactions
-- Maintain state without context window limitations
+**Why extend Mem0?**
+- Mem0 provides excellent vector + graph capabilities
+- But it lacks BM25 keyword precision for exact matches
+- This project adds the missing piece: hybrid search
 
-| Approach | Keyword Match | Semantic Match | Speed | Best For |
-|----------|--------------|----------------|-------|----------|
-| Pure BM25 | ✅ Excellent | ❌ Poor | ⚡ Fast | Exact matches |
-| Pure Vector | ❌ Poor | ✅ Excellent | 🐢 Slow | Conceptual search |
-| **Hybrid (This)** | ✅ Excellent | ✅ Excellent | ⚡ Fast | **OpenClaw agents** |
+| Component | Source | Enhancement |
+|-----------|--------|-------------|
+| **Vector Search** | Mem0 (FAISS) | ✅ Unchanged |
+| **Graph Memory** | Mem0 (Neo4j) | ✅ Unchanged |
+| **BM25 Search** | rank-bm25 | ➕ **Added** |
+| **Hybrid Fusion** | This project | ➕ **New** |
+| **Caching** | This project | ➕ **New** |
+| **OpenClaw Integration** | This project | ➕ **New** |
 
 ## 🚀 Quick Start for OpenClaw Users
 
@@ -342,11 +346,22 @@ This project builds upon and extends several excellent open source projects:
 
 We extend our gratitude to the creators and maintainers of these projects. OpenClaw Hybrid Memory combines their strengths into a unified, production-ready solution specifically optimized for OpenClaw agents.
 
-## 📸 Architecture
+## 📐 Architecture
 
-![OpenClaw Hybrid Memory Architecture](https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/docs/assets/architecture-diagram.png)
+![OpenClaw Hybrid Memory Technical Architecture](https://raw.githubusercontent.com/lamost423/openclaw-hybrid-memory/main/docs/assets/technical-architecture.png)
 
-*OpenClaw Hybrid Memory architecture: Central hub connected to BM25 Keyword Search (blue), Vector Semantic Search (purple), and Intelligent Cache (gold)*
+*Technical architecture: User query flows through cache check, then parallel BM25 and Vector search, fusion engine combines results*
+
+### Component Stack
+
+| Layer | Technology | Source |
+|-------|-----------|--------|
+| **Vector Search** | FAISS | Mem0 |
+| **Graph Memory** | Neo4j | Mem0 |
+| **Keyword Search** | BM25 | rank-bm25 |
+| **Hybrid Fusion** | Custom | This Project |
+| **Caching** | In-Memory + Disk | This Project |
+| **OpenClaw Integration** | Heartbeat + Scripts | This Project |
 
 ## 📧 Support
 
