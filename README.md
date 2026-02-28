@@ -332,10 +332,21 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 🙏 Acknowledgments
 
-- Built for [OpenClaw](https://openclaw.ai) - The AI agent platform
-- Inspired by [Mem0](https://github.com/mem0ai/mem0) - Graph memory system
-- [rank-bm25](https://github.com/dorianbrown/rank_bm25) - BM25 implementation
-- [Ollama](https://ollama.com) - Local embeddings for OpenClaw
+This project builds upon and extends several excellent open source projects:
+
+- **[OpenClaw](https://openclaw.ai)** - The AI agent platform this memory system is designed for
+- **[Mem0](https://github.com/mem0ai/mem0)** - Graph memory system with FAISS + Neo4j architecture
+- **[rank-bm25](https://github.com/dorianbrown/rank_bm25)** - BM25 algorithm implementation for keyword search
+- **[Ollama](https://ollama.com)** - Local LLM and embedding inference
+- **[FAISS](https://github.com/facebookresearch/faiss)** - Facebook's vector search library
+
+We extend our gratitude to the creators and maintainers of these projects. OpenClaw Hybrid Memory combines their strengths into a unified, production-ready solution specifically optimized for OpenClaw agents.
+
+## 📸 Architecture
+
+![OpenClaw Hybrid Memory Architecture](docs/assets/architecture-diagram.png)
+
+*Hybrid memory architecture combining BM25 keyword search, vector semantic search, and intelligent caching for OpenClaw AI agents*
 
 ## 📧 Support
 
