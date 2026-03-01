@@ -4,7 +4,9 @@
 
 [![Built for OpenClaw](https://img.shields.io/badge/Built%20for-OpenClaw-purple.svg)](https://openclaw.ai)
 [![Token Cost Reduction](https://img.shields.io/badge/Token%20Cost-70%25%2B%20Savings-green.svg)]()
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+
+⚠️ **必须使用 Python 3.11**，Python 3.14 会导致 Mem0 搜索死锁。
 
 [English](README_EN.md) | [中文](README_CN.md)
 
