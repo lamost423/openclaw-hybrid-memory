@@ -83,15 +83,6 @@ class SelfMemorySearcher:
             return True
         
         try:
-            # 加载 BM25
-            bm25_path = self.index_dir / "bm25_index.pkl"
-            with open(bm25_path, "rb") as f:
-                self.bm25 = pickle.load(f)
-            
-            # 加载向量索引
-            vector_path = self.index_dir / "vector_index.npy"
-            self.embeddings = np.load(vector_path)
-            
             # 加载文档
             docs_path = self.index_dir / "documents.json"
             with open(docs_path, "r", encoding="utf-8") as f:
@@ -100,11 +91,42 @@ class SelfMemorySearcher:
             # 从文档重建 tokenized_corpus
             self.tokenized_corpus = [self.tokenize(d["content"]) for d in self.documents]
             
+            # 加载 BM25（如果不存在则重建）
+            bm25_path = self.index_dir / "bm25_index.pkl"
+            if bm25_path.exists():
+                with open(bm25_path, "rb") as f:
+                    loaded_bm25 = pickle.load(f)
+                    # 验证加载的对象类型
+                    if hasattr(loaded_bm25, 'get_scores'):
+                        self.bm25 = loaded_bm25
+                    else:
+                        print("⚠️  BM25 index corrupted, rebuilding...")
+                        self.bm25 = BM25Okapi(self.tokenized_corpus)
+                        self._save_bm25()
+            else:
+                print("⚠️  BM25 index not found, rebuilding...")
+                self.bm25 = BM25Okapi(self.tokenized_corpus)
+                self._save_bm25()
+            
+            # 加载向量索引
+            vector_path = self.index_dir / "vector_index.npy"
+            self.embeddings = np.load(vector_path)
+            
             self.loaded = True
             return True
         except Exception as e:
             print(f"⚠️  Failed to load self-memory index: {e}")
             return False
+    
+    def _save_bm25(self):
+        """保存 BM25 索引"""
+        try:
+            self.index_dir.mkdir(parents=True, exist_ok=True)
+            bm25_path = self.index_dir / "bm25_index.pkl"
+            with open(bm25_path, "wb") as f:
+                pickle.dump(self.bm25, f)
+        except Exception as e:
+            print(f"⚠️  Failed to save BM25 index: {e}")
     
     def tokenize(self, text: str) -> List[str]:
         """分词"""
