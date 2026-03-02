@@ -1,6 +1,6 @@
 """
-Mem0 Configuration - 修复版 (使用 OpenAI 兼容模式)
-OpenRouter 通过 OpenAI 兼容 API 调用
+Mem0 Configuration - 本地版 (使用 Ollama)
+完全本地运行，不依赖外部 API
 """
 import os
 
@@ -20,21 +20,20 @@ MEM0_CONFIG = {
         }
     },
     "llm": {
-        "provider": "openai",
+        "provider": "ollama",
         "config": {
-            "model": "google/gemini-2.0-flash-001",
-            "api_key": "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",
-            "openai_base_url": "https://openrouter.ai/api/v1",
-            "temperature": 0.1
+            "model": "gemma2:2b",
+            "temperature": 0.1,
+            "max_tokens": 2000,
+            "ollama_base_url": "http://localhost:11434"
         }
     },
     "embedder": {
-        "provider": "openai",
+        "provider": "ollama",
         "config": {
-            "model": "google/gemini-embedding-exp-03-07",
-            "api_key": "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",
-            "openai_base_url": "https://openrouter.ai/api/v1",
-            "embedding_dims": 3072
+            "model": "mxbai-embed-large",
+            "ollama_base_url": "http://localhost:11434",
+            "embedding_dims": 1024
         }
     }
 }
