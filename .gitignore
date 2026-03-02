@@ -40,9 +40,49 @@ Thumbs.db
 config/index/
 config/cache/
 config/self-memory/
+config/mcporter.json
 backups/
 *.log
 memory/
+
+# Personal workspace files (do not track)
+AGENTS.md
+USER.md
+SOUL.md
+MEMORY.md
+IDENTITY.md
+HEARTBEAT.md
+TOOLS.md
+SESSION-STATE.md
+PLAN_*.md
+GITHUB_SHARING_ASSESSMENT.md
+ARCHITECTURE_COMPARISON.md
+OPENCLAW_SELF_MEMORY_README.md
+LICENSE_SELF_MEMORY
+PYEOF
+
+# Personal scripts (Reddit automation, etc.)
+scripts/reddit_*.sh
+scripts/reddit_*.py
+scripts/auto_reddit*.sh
+scripts/generate_comment*.py
+scripts/monitor-*.sh
+scripts/check-*.sh
+scripts/morning_briefing.md
+scripts/test_*.py
+scripts/test_*.sh
+scripts/migrate_to_mem0.py
+scripts/trigger_ai.sh
+scripts/search.sh
+
+# Personal docs
+docs/MEMORY_SYSTEM_WORKFLOW.md
+
+# Personal directories
+knowledge/
+plans/
+github-release/
+skills/
 
 # Large files
 *.pkl
