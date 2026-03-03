@@ -7,6 +7,7 @@ Mem0 维护脚本 - 每小时执行
 
 import os
 import sys
+import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -21,23 +22,29 @@ def log(msg):
 def export_mem0_backup():
     """导出 Mem0 备份"""
     try:
-        sys.path.insert(0, str(WORKSPACE / "scripts"))
-        from mem0_bridge_enhanced import MemoryEngine
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(WORKSPACE / "scripts" / "mem0_bridge_enhanced.py"),
+                "export",
+                "--output", str(BACKUP_FILE)
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(WORKSPACE),
+            env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"}
+        )
         
-        engine = MemoryEngine()
-        if not engine.available:
-            log("⚠️  Mem0 不可用，跳过备份")
-            return False
-        
-        # 执行导出
-        result = engine.export_all()
-        if result:
-            with open(BACKUP_FILE, 'w', encoding='utf-8') as f:
-                f.write(result)
-            log(f"✅ Mem0 备份已导出: {BACKUP_FILE}")
-            return True
+        if result.returncode == 0:
+            if BACKUP_FILE.exists():
+                size = BACKUP_FILE.stat().st_size
+                log(f"✅ Mem0 备份已导出: {BACKUP_FILE} ({size} bytes)")
+                return True
+            else:
+                log("⚠️  备份文件未生成")
+                return False
         else:
-            log("⚠️  Mem0 导出为空")
+            log(f"❌ Mem0 备份失败: {result.stderr}")
             return False
             
     except Exception as e:
@@ -63,24 +70,28 @@ def sync_daily_log_to_mem0():
         with open(log_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # 提取关键事实（简化版，只取前 2000 字符）
-        facts = content[:2000] if len(content) > 2000 else content
+        # 提取关键事实（简化版，只取前 1500 字符）
+        facts = content[:1500] if len(content) > 1500 else content
         
-        sys.path.insert(0, str(WORKSPACE / "scripts"))
-        from mem0_bridge_enhanced import MemoryEngine
+        # 使用命令行添加记忆
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(WORKSPACE / "scripts" / "mem0_bridge_enhanced.py"),
+                "add",
+                f"{today} 日志摘要: {facts}"
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(WORKSPACE),
+            env={**os.environ, "KMP_DUPLICATE_LIB_OK": "TRUE"}
+        )
         
-        engine = MemoryEngine()
-        if not engine.available:
-            log("⚠️  Mem0 不可用，跳过同步")
-            return False
-        
-        # 写入 Mem0
-        success = engine.add(f"2026-03-02 日志摘要: {facts[:500]}...", user_id="daniel")
-        if success:
+        if result.returncode == 0:
             log(f"✅ 今日日志已同步到 Mem0 ({size} bytes)")
             return True
         else:
-            log("⚠️  Mem0 同步失败")
+            log(f"⚠️  Mem0 同步失败: {result.stderr}")
             return False
             
     except Exception as e:
